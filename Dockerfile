@@ -7,8 +7,8 @@ ENV NODE_ENV $NODE_ENV
 
 RUN mkdir /app
 WORKDIR /app
-ADD package.json  /app/
-RUN yarn install --frozen-lockfile
+ADD package.json yarn.lock /app/
+RUN yarn --pure-lockfile
 ADD . /app
 
 CMD ["yarn", "docker:start"]
