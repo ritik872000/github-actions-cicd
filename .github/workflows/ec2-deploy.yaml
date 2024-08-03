@@ -31,7 +31,7 @@ jobs:
           context: ./
           push: true
           dockerfile: ./Dockerfile
-          tags: ritik-kesharwani/simple-restapi:latest
+          tags: ritik872000/ritik-kesharwani:latest
   # deploy:
   #   needs: build
   #   runs-on: ubuntu-latest
