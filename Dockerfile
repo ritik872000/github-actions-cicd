@@ -8,7 +8,7 @@ ENV NODE_ENV $NODE_ENV
 RUN mkdir /app
 WORKDIR /app
 ADD package.json yarn.lock /app/
-RUN yarn 
+RUN yarn upgrade
 ADD . /app
 
 CMD ["yarn", "docker:start"]
