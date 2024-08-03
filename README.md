@@ -1,164 +1,163 @@
-# Express ES2017 REST API Boilerplate
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![npm version](https://badge.fury.io/js/express-rest-es2017-boilerplate.svg)](https://badge.fury.io/js/express-rest-es2017-boilerplate) [![Build Status](https://travis-ci.org/danielfsousa/express-rest-es2017-boilerplate.svg?branch=master)](https://travis-ci.org/danielfsousa/express-rest-es2017-boilerplate) [![Coverage Status](https://coveralls.io/repos/github/danielfsousa/express-rest-es2017-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/danielfsousa/express-rest-es2017-boilerplate?branch=master)
+# Dockerizing-a-NodeJS-web-app
+<p align="center">
+    <img
+      alt="Node.js"
+      src="nodeJsDocker.png"
+      width="400"
+    />
+</p>
+<hr>
 
-Boilerplate/Generator/Starter Project for building RESTful APIs and microservices using Node.js, Express and MongoDB
+Create a simple nodeJs application and deploy it onto a docker container.
 
-## Features 
+1. Create a working directory
+    > mkdir <working_directory_name>
+  
+2. Running this command in working directory will initialize your project
+    > npm init
+  
+This will create a **package.json** file in the folder, that file contains app dependency packages.
 
- - No transpilers, just vanilla javascript
- - ES2017 latest features like Async/Await
- - CORS enabled
- - Uses [yarn](https://yarnpkg.com)
- - Express + MongoDB ([Mongoose](http://mongoosejs.com/))
- - Consistent coding styles with [editorconfig](http://editorconfig.org)
- - [Docker](https://www.docker.com/) support
- - Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
- - Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
- - Request validation with [joi](https://github.com/hapijs/joi)
- - Gzip compression with [compression](https://github.com/expressjs/compression)
- - Linting with [eslint](http://eslint.org)
- - Tests with [mocha](https://mochajs.org), [chai](http://chaijs.com) and [sinon](http://sinonjs.org)
- - Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io)
- - Git hooks with [husky](https://github.com/typicode/husky) 
- - Logging with [morgan](https://github.com/expressjs/morgan)
- - Authentication and Authorization with [passport](http://passportjs.org)
- - API documentation generation with [apidoc](http://apidocjs.com)
- - Continuous integration support with [travisCI](https://travis-ci.org)
- - Monitoring with [pm2](https://github.com/Unitech/pm2)
+Replace the following code of package.json
 
-## Requirements
+```js
+  // package.json
 
- - [Node v7.6+](https://nodejs.org/en/download/current/) or [Docker](https://www.docker.com/)
- - [Yarn](https://yarnpkg.com/en/docs/install)
-
-## Getting Started
-
-#### Clone the repo and make it yours:
-
-```bash
-git clone --depth 1 https://github.com/danielfsousa/express-rest-es2017-boilerplate
-cd express-rest-es2017-boilerplate
-rm -rf .git
+  {
+    "name": "docker_web_app",
+    "version": "1.0.0",
+    "description": "Node.js deploy on Docker container",
+    "author": "cmuth001@odu.edu",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "express": "^4.16.1"
+    }
+  }
 ```
 
-#### Install dependencies:
+2. Running this command will install all the dependencies from package.json 
+    > npm install
+3. Lets create a **server.js** file that defines a web-app using an Express framework.
 
-```bash
-yarn
+  
+ ```js
+    // server.js
+    'use strict';
+    var express = require('express');
+    var app = express();
+    app.get('/', function (req, res) {
+      res.send('Hello World!');
+    });
+    app.listen(3000, function () {
+      console.log('Example app listening on port 3000!');
+    });
+
+ ```
+ 
+4. Lets test the application, run the below command
+    > node server.js
+  
+  If you followed the  above steps on your system, you will see the same output as below image: [http://localhost:3000/](http://localhost:3000/)
+  
+  <p align="center">
+    <img
+      alt="Node.js"
+      src="image1.png"
+      width="400"
+    />
+  </p>
+      
+  Now node.js app is running successfully.
+   
+Lets try running the same node.js application running on the docker container. To run the application on the docker conatiner we need a docker image. 
+
+First, we will create a docker image for the application.
+   
+5. Create a **Dockerfile**
+    > touch Dockerfile
+6. Dockerfile should look like this
 ```
+FROM node:10
+# Create app directory
+WORKDIR /usr/app
 
-#### Set environment variables:
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
 
-```bash
-cp .env.example .env
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
+
+# Bundle app source
+COPY . .
+EXPOSE 3000
+CMD [ "node", "server.js" ]
+
 ```
-
-## Running Locally
-
-```bash
-yarn dev
+7. Create **.dockerignore** file with following content
+ 
 ```
-
-## Running in Production
-
-```bash
-yarn start
+node_modules
+npm-debug.log
 ```
-
-## Lint
-
-```bash
-# lint code with ESLint
-yarn lint
-
-# try to fix ESLint errors
-yarn lint:fix
-
-# lint and watch for changes
-yarn lint:watch
+   This will prevent from copying onto docker image.
+    
+8. Building Docker image
+    > docker build -t node-web-app .
+    
+    <p align="center">
+        <img
+          alt="Node.js"
+          src="image2.png"
+          width="400"
+        />
+      </p>
+9. Check the Docker images
+    > docker images
+    
+    <p align="center">
+        <img
+          alt="Node.js"
+          src="image3.png"
+          width="400"
+        />
+      </p>
+10. Run the docker image
+    > docker run -p 49160:3000 -d node-web-app
+ 
+11. Get the container id
+    > docker ps
+    
+    <p align="center">
+        <img
+          alt="Node.js"
+          src="image4.png"
+          width="400"
+        />
+      </p>
+      
+12. Lets know where it is running on
+    > docker logs <container_id>
+    
 ```
-
-## Test
-
-```bash
-# run all tests with Mocha
-yarn test
-
-# run unit tests
-yarn test:unit
-
-# run integration tests
-yarn test:integration
-
-# run all tests and watch for changes
-yarn test:watch
-
-# open nyc test coverage reports
-yarn coverage
+output: 
+    Example app listening on port 3000!
 ```
-
-## Validate
-
-```bash
-# run lint and tests
-yarn validate
-```
-
-## Logs
-
-```bash
-# show logs in production
-pm2 logs
-```
-
-## Documentation
-
-```bash
-# generate and open api documentation
-yarn docs
-```
-
-## Docker
-
-```bash
-# run container locally
-yarn docker:dev
-
-# run container in production
-yarn docker:prod
-
-# run tests
-yarn docker:test
-```
-
-## Deploy
-
-Set your server ip:
-
-```bash
-DEPLOY_SERVER=127.0.0.1
-```
-
-Replace my Docker username with yours:
-
-```bash
-nano deploy.sh
-```
-
-Run deploy script:
-
-```bash
-yarn deploy
-```
-
-## Tutorials
- - [Create API Documentation Using Squarespace](https://selfaware.blog/home/2018/6/23/api-documentation)
-
-## Inspirations
-
- - [KunalKapadia/express-mongoose-es6-rest-api](https://github.com/KunalKapadia/express-mongoose-es6-rest-api)
- - [diegohaz/rest](https://github.com/diegohaz/rest)
-
-## License
-
-[MIT License](README.md) - [Daniel Sousa](https://github.com/danielfsousa)
+13. If you followed the  above steps on your system, you will see the sam output as below image: [http://localhost:49160/](http://localhost:49160/)
+  
+  <p align="center">
+        <img
+          alt="Node.js"
+          src="image5.png"
+          width="400"
+        />
+      </p>
+    
+I hope this tutorial helped you get up and running a simple Node.js application on Docker container.
+    
+ 
