@@ -1,13 +1,17 @@
 name: Deploying a docker image to AWS EC2
 on:
-  push
-env:
-  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-  AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+  push:
+    branches:
+      - 'main'
+
 jobs:
   publish_image:
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,7 +24,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
