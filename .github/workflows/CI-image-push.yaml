@@ -1,0 +1,29 @@
+name: building and pushing the docker image to dockerhub
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  publish_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        env:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          docker login -u $username -p $password
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag ritik872000/ritik-kesharwani:latest
+    
+      - name: Push the Docker Image
+        run: docker push ritik872000/ritik-kesharwani:latest
+  deploy:
+    needs: build
+    runs-on: self-hosted
+

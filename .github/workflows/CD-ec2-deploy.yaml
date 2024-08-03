@@ -1,0 +1,28 @@
+name: pulling and deploying the docker image on EC2
+on:
+  workflow_run:
+    workflow: ["building and pushing the docker image to dockerhub"]
+    branches:
+      - main
+    types:
+      - completed
+
+jobs:
+  builds:
+    runs-on: self-hosted      
+    steps:
+      - name: Login to DockerHub
+        env:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          docker login -u $username -p $password
+
+      - name: Pull Docker Image 
+        run: sudo docker pull ritik872000/ritik-kesharwani:latest
+
+      - name: run the docker image
+        run: sudo docker run -d -p 3000:3000 --name rest-api-container ritik872000/ritik-kesharwani:latest
+      
+      
+
