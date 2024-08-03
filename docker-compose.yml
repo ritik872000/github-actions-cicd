@@ -1,6 +1,8 @@
 name: Deploying a docker image to AWS EC2
-on: push
-
+on:
+  push:
+    branches:
+      - 'main'
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
