@@ -1,7 +1,7 @@
 name: pulling and deploying the docker image on EC2
 on:
   workflow_run:
-    workflow: ['building and pushing the docker image to dockerhub']
+    workflows: ['building and pushing the docker image to dockerhub']
     branches:
       - main
     types:
