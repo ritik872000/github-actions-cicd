@@ -20,6 +20,9 @@ jobs:
 
       - name: Pull Docker Image 
         run: sudo docker pull ritik872000/ritik-kesharwani:latest
+      
+      - name: remove old docker container
+        run: docker rm -f rest-api-container || true
 
       - name: run the docker image
         run: sudo docker run -d -p 3000:3000 --name rest-api-container ritik872000/ritik-kesharwani:latest
